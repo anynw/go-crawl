@@ -13,7 +13,18 @@ func main() {
 		// Url:       "https://book.douban.com",
 		// ParseFunc: parse.ParseTag,
 		//测试解析标题
-		Url:       "https://book.douban.com/tag/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C",
-		ParseFunc: parse.ParseBookList,
+		// Url:       "https://book.douban.com/tag/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C",
+		// ParseFunc: parse.ParseBookList,
+
+		//测试解析书籍详情页
+		Url:       "https://book.douban.com/subject/30293801/",
+		ParseFunc: parse.ParseBookDetail,
 	})
+
+	//测试正则有效性
+	// const str = `<div id="info" class="">`
+	// re := regexp.MustCompile(str)
+	// match := re.FindString(str)
+	// fmt.Println("match:", match)
+
 }
