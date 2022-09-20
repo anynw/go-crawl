@@ -17,8 +17,12 @@ func main() {
 		// ParseFunc: parse.ParseBookList,
 
 		//测试解析书籍详情页
-		Url:       "https://book.douban.com/subject/30293801/",
-		ParseFunc: parse.ParseBookDetail,
+		// Url:       "https://book.douban.com/subject/30293801/",
+		// ParseFunc: parse.ParseBookDetail,
+
+		//汇总版本，tag->booklist->bookdetail
+		Url:       "https://book.douban.com",
+		ParseFunc: parse.ParseTag,
 	})
 
 	//测试正则有效性
