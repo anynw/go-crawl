@@ -8,7 +8,8 @@ import (
 
 type Scheduler interface {
 	Submit(Request)
-	configureWorkChan(chan Request)
+	Run()
+	WorkReady(chan Request)
 }
 
 type ConCurrentEngine struct {
@@ -29,13 +30,40 @@ func (s *SimpleSchedule) configureWorkChan(requests chan Request) {
 }
 
 func (e *ConCurrentEngine) Run(seeds ...Request) {
-	in := make(chan Request)
+	// 第一种
+	// in := make(chan Request)
+	// out := make(chan ParseResult)
+	//
+	// e.Scheduler.configureWorkChan(in)
+	//
+	// for i := 0; i < e.WorkCount; i++ {
+	// 	CreateWork(in, out)
+	// }
+	//
+	// for _, r := range seeds {
+	// 	e.Scheduler.Submit(r)
+	// }
+	//
+	// // 处理out
+	// itemCount := 0
+	// for {
+	// 	result := <-out
+	// 	for _, item := range result.Items {
+	// 		log.Printf("Got item :%d,%v", itemCount, item)
+	// 		itemCount++
+	// 	}
+	//
+	// 	for _, request := range result.Requests {
+	// 		e.Scheduler.Submit(request)
+	// 	}
+	//
+	// }
+	// 第二种
 	out := make(chan ParseResult)
-
-	e.Scheduler.configureWorkChan(in)
+	e.Scheduler.Run()
 
 	for i := 0; i < e.WorkCount; i++ {
-		CreateWork(in, out)
+		CreateWork(out, e.Scheduler)
 	}
 
 	for _, r := range seeds {
@@ -58,10 +86,12 @@ func (e *ConCurrentEngine) Run(seeds ...Request) {
 	}
 }
 
-func CreateWork(in chan Request, out chan ParseResult) {
+func CreateWork(out chan ParseResult, s Scheduler) {
+	in := make(chan Request)
 	// 创建一个协程
 	go func() {
 		for {
+			s.WorkReady(in)
 			request := <-in
 			result, err := worker(request)
 			if err != nil {
@@ -74,7 +104,7 @@ func CreateWork(in chan Request, out chan ParseResult) {
 }
 
 func worker(request Request) (ParseResult, error) {
-	fmt.Printf("Fetch url:%s", request.Url)
+	fmt.Printf("Fetch url:%s\n", request.Url)
 	body, err := fetch.Fetch(request.Url)
 	if err != nil {
 		return ParseResult{}, err

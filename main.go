@@ -3,19 +3,30 @@ package main
 import (
 	"github.com/anynw/go-crawl/engine"
 	"github.com/anynw/go-crawl/parse"
+	"github.com/anynw/go-crawl/scheduler"
 )
 
 // https://book.douban.com/tag/%E5%B0%8F%E8%AF%B4
 // https://book.douban.com/tag/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C
 func main() {
+
 	eg := engine.ConCurrentEngine{
-		Scheduler: &engine.SimpleSchedule{},
+		Scheduler: &scheduler.QueueScheduler{},
 		WorkCount: 100,
 	}
 	eg.Run(engine.Request{
 		Url:       "https://book.douban.com",
 		ParseFunc: parse.ParseTag,
 	})
+
+	// eg := engine.ConCurrentEngine{
+	// 	Scheduler: &engine.SimpleSchedule{},
+	// 	WorkCount: 100,
+	// }
+	// eg.Run(engine.Request{
+	// 	Url:       "https://book.douban.com",
+	// 	ParseFunc: parse.ParseTag,
+	// })
 
 	// engine.Run(engine.Request{
 	// 	//测试解析标签
