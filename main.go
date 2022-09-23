@@ -16,6 +16,10 @@ func (hh *aboutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("about"))
 }
 
+func welcome(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("welcome"))
+}
+
 func main() {
 
 	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -35,6 +39,13 @@ func main() {
 
 	http.Handle("/hello", &hh)
 	http.Handle("/about", &ab)
+
+	http.HandleFunc("/home", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("home"))
+	})
+
+	// http.HandleFunc("/welcome", welcome)
+	http.Handle("/welcome", http.HandlerFunc(welcome))
 
 	server.ListenAndServe()
 }
